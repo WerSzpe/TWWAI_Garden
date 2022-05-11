@@ -1,0 +1,37 @@
+.navback {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #21421d;
+    color: #faf0e6;
+    padding: 15;
+    padding-bottom: 25;
+    border: 1px solid #21421d;
+    border-radius: 0px 0px 25px 25px;
+}
+.title  {
+    font-size: 24px;
+    font-style: bold;
+    margin-left: 20px;
+}
+.nav-list {
+    display:flex;
+    flex-direction: row;
+    justify-content:space-between;
+    align-items: center;
+    text-decoration: none;
+    list-style-type: none;
+    padding-top: 15px;
+    padding-right: 30px;
+}
+.list-el {
+    padding: 10px;
+    margin: 5px;
+    text-decoration: none;
+    color: #faf0e6;
+    
+}
+.clear-float{
+    clear: both;
+}
