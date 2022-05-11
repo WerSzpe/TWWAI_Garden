@@ -3,14 +3,14 @@ import paramDAO from '../DAO/paramDAO';
 function create() {
     async function query() {
         //get all
-        let result = paramDAO.query();
+        let result = await paramDAO.query();
         if (result) {
             return result;
         }
     }
         //add
     async function add(object) {
-      let result = paramDAO.add(object);
+      let result = await paramDAO.add(object);
       if(result) {
         return result;
       }

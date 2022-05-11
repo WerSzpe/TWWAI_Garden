@@ -56,6 +56,18 @@ const ChartView = (props) => {
             ]
         };
 
+        temp.labels = dataRes.map(item => {
+            return item.date;
+        });
+
+        press.labels = dataRes.map(item => {
+            return item.date;
+        });
+
+        hum.labels = dataRes.map(item => {
+            return item.date;
+        });
+
         temp.datasets[0].data = dataRes.map(item => {
             return item.temp;
         });
@@ -69,27 +81,25 @@ const ChartView = (props) => {
         });
 
         setTempData(temp);
-        setHumData(temp);
+        setHumData(hum);
         setPressData(press);
     }
 
     useEffect(() => {
-        const socket = io(ENDPOINT, {
-            transports: ['websocket', 'polling', 'flashsocket'],
-        });
-        socket.on("currentState", data => {
-            setSampleDate(data.date);
-        });
+        
 
         const fetchAir = async () => {
             const res = await fetch("http://localhost:3001/api/params");
             const dataRes = await res.json();
             const currentSection = await fetch("http://localhost:3001/api/params/");
             const currentSectionData = await currentSection.json();
-
             setSampleDate(dataRes);
-            console.log(dataRes )
         };
+
+        const socket = io(ENDPOINT);
+        socket.on("currentState", data => {
+            setDatasets(data.data);
+        });
 
         fetchAir();
     }, []);

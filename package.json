@@ -24,7 +24,7 @@
       "mongoose-unique-validator": "3.0.0",
       "morgan": "1.10.0",
       "sha1": "1.1.1",
-      "socket.io": "^2.0.4",
+      "socket.io": "4.5.0",
       "vision": "4.1.0"
     },
     "license": "ISC"

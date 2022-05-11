@@ -49,7 +49,7 @@ const Home = (props) => {
             <div className="container" >
                 <div style={styles.upSection}>
                     <div style={styles.title}>Hi username! See your plants:</div>
-                    <button style={styles.addBtn} onClick={() => {addSec()}}>Add new section</button>
+                    <button style={styles.addBtn} >Add new section</button>
                 </div>
                 
                 <div style={styles.cardBox}>

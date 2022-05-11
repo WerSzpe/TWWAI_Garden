@@ -10,6 +10,7 @@ import http from 'http';
 import socket from 'socket.io';
 
 import applicationException from './service/applicationException';
+import business from './business/business.container';
 
 const app = express();
 app.use(express.static(__dirname + '/public'));
@@ -21,7 +22,12 @@ app.use(bodyParser.json({limit: '2048kb'}));
 app.use(cors());
 
 const server = http.createServer(app);
-const io = socket(server);
+const io = socket(server, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"]
+    }
+});
 
 mongoose.connect(config.databaseUrl, {
     useNewUrlParser: true,
@@ -45,15 +51,15 @@ process.on('SIGINT', () => {
 
 routes(app);
 
-let interval;
+let interval = null;
 
-const getApiAndEmit = async socket => {
+async function getApiAndEmit(socket) {
    try {
-       let result = await business.getParamManager().getLast();
-       socket.emit("currentState", {"data": result});
-       console.log(result)
+       let result = await business.getParamManager().query();
+       await socket.emit("currentState", {"data": result});
+      
    } catch (error) {
-       throw applicationException.new(applicationException.BAD_REQUEST, 'User with that email does not exist');
+       console.log(error);
    }
 };
 
@@ -64,7 +70,7 @@ io.on("connection", (socket) => {
        clearInterval(interval);
    }
 
-   interval = setInterval(async () => await getApiAndEmit(socket), 10000);
+   interval = setInterval(() => getApiAndEmit(socket), 1000);
 
    socket.on("disconnect", () => {
        console.log("Client disconnected");
@@ -73,3 +79,4 @@ io.on("connection", (socket) => {
 });
 
 server.listen(config.port, () => console.log(`Listening on port ${config.port}`));
+
