@@ -17,8 +17,15 @@ function create() {
     }
 
     async function getSection(id) {
-        let result = await paramDAO.get(id);
+        let result = await paramDAO.getSection(id);
         if(result) {
+            return result;
+        }
+    }
+
+    async function getLast() {
+        let result = await paramDAO.getLast();
+        if (result) {
             return result;
         }
     }
@@ -26,7 +33,8 @@ function create() {
     return {
         query: query,
         add: add,
-        getSection: getSection
+        getSection: getSection,
+        getLast: getLast
     };
 }
 

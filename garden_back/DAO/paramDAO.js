@@ -42,15 +42,24 @@ async function add(object) {
 }
 
 async function getSection(id) {
-    const result = await ParamModel.findOne({section_id:id});
+    const result = await ParamModel.find({section_id:id});
     if(result) {
         return result;
+    }
+}
+
+async function getLast(sec_id) {
+    const result = await ParamModel.findOne(sec_id).sort({'section_id': -1}).limit(1);
+    if(result){
+        return mongoConverter(result);
     }
 }
 
 export default {
     query: query,
     add:add,
+    getSection: getSection,
+    getLast: getLast,
 
     model: ParamModel
 };
