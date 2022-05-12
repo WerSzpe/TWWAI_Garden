@@ -1,4 +1,5 @@
-import React from "react";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 import Navbar from './Navbar';
 import FieldCard from "./FieldCard";
@@ -49,7 +50,7 @@ const Home = (props) => {
             <div className="container" >
                 <div style={styles.upSection}>
                     <div style={styles.title}>Hi username! See your plants:</div>
-                    <button style={styles.addBtn} >Add new section</button>
+                    <Link to="/add-section"> <button style={styles.addBtn} >Add new section</button></Link>
                 </div>
                 
                 <div style={styles.cardBox}>

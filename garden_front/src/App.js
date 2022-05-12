@@ -6,6 +6,7 @@ import './App.css';
 import Home from './components/Home';
 import ChartView from './components/ChartView';
 import NotFound from './components/NotFound';
+import AddSection from './components/AddSection';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
 
             <Route path='/' element={<Home />}/>
             <Route path='/chart' element={<ChartView/>}/>
+            <Route path="/add-section" element={<AddSection/>}/>
 
             <Route path='/notFound' element={<NotFound/>}/>
             <Route path="*" element={<Navigate to ="/notFound" />}/>
