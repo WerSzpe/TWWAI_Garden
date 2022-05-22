@@ -1,6 +1,8 @@
 'use strict';
 
 import paramManager from './param.manager';
+import sectionManager from './section.manager';
+import userManager from './user.manager';
 
 
 function getter(manager, request) {
@@ -11,4 +13,6 @@ function getter(manager, request) {
 
 export default {
     getParamManager: getter(paramManager),
+    getSectionManager: getter(sectionManager),
+    getUserManager: getter(userManager),
 };

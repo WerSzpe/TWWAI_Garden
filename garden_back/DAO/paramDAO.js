@@ -4,12 +4,11 @@ import mongoConverter from '../service/mongoConverter';
 import * as _ from "lodash";
 
 const paramSchema = new mongoose.Schema({
-    date: {type: String},
-    id: {type: Number},
-    temp: {type: String},
-    pressure: {type: String},
-    humidity: {type: String},
-    section_id:{type: Number}
+    date: {type: Date},
+    temp: {type: Number},
+    pressure: {type: Number},
+    humidity: {type: Number},
+    section_id:{type: mongoose.Schema.ObjectId, ref: 'Section'}
 }, {
     collection: 'Air Sensor'
 });
@@ -29,8 +28,7 @@ async function query() {
 async function add(object) {
     
     const result = await ParamModel.create({
-                                        date:object.date,
-                                        id:object.id,
+                                        date:Date.now(),
                                         temp:object.temp,
                                         pressure:object.pressure,
                                         humidity:object.humidity,
@@ -48,8 +46,15 @@ async function getSection(id) {
     }
 }
 
+async function removeSection(id) {
+    const result = await ParamModel.deleteMany({section_id:id});
+    if(result) {
+        return result;
+    }
+}
+
 async function getLast(sec_id) {
-    const result = await ParamModel.findOne(sec_id).sort({'section_id': -1}).limit(1);
+    const result = await ParamModel.findOne({section_id: sec_id}).sort({'date': -1}).limit(1);
     if(result){
         return mongoConverter(result);
     }
@@ -59,7 +64,8 @@ export default {
     query: query,
     add:add,
     getSection: getSection,
-    getLast: getLast,
+    getLast:getLast,
+    removeSection: removeSection,
 
     model: ParamModel
 };

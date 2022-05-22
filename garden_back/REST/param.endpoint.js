@@ -1,6 +1,7 @@
 import { request } from 'express';
 import business from '../business/business.container';
 import applicationException from "../service/applicationException";
+import auth from "../middleware/auth.js";
 
 const paramEndpoint = (router) => {
     // get
@@ -22,7 +23,7 @@ const paramEndpoint = (router) => {
       }
     });
     //get section
-    router.get('/api/params/:id', async(request, response, next) => {
+    router.get('/api/params/:id',auth, async(request, response, next) => {
       try{
         let result = await business.getParamManager().getSection(request.params.id);
         response.status(200).send(result);
@@ -31,9 +32,9 @@ const paramEndpoint = (router) => {
       }
     });
 //getlast
-    router.get('/api/params/get-last-from-section', async(request, response, next) => {
+    router.get('/api/params/get-last-from-section', auth, async(request, response, next) => {
       try {
-        let result = await business.getParamManager().getLast();
+        let result = await business.getParamManager().getLast(request.params.id);
         response.status(200).send(result);
       } catch (error) {
         applicationException.errorHandler(error, response);

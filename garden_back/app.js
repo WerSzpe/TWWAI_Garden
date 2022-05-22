@@ -8,6 +8,7 @@ import routes from './REST/routes';
 
 import http from 'http';
 import socket from 'socket.io';
+import jwt from "jsonwebtoken";
 
 import applicationException from './service/applicationException';
 import business from './business/business.container';
@@ -55,27 +56,37 @@ let interval = null;
 
 async function getApiAndEmit(socket) {
    try {
-       let result = await business.getParamManager().query();
-       await socket.emit("currentState", {"data": result});
-      
+    let sectionsLast = await (await business.getSectionManager().queryData());
+    let sections = await business.getSectionManager().query();
+    for(let section of sections){
+        let data = await business.getParamManager().getSection(section.id);
+        await socket.emit(section.id, {"data": data});
+    }
+    await socket.emit("sectionsUpdate", {"data": sectionsLast});
    } catch (error) {
        console.log(error);
    }
 };
 
 io.on("connection", (socket) => {
-   console.log("New client connected");
 
-   if (interval) {
-       clearInterval(interval);
-   }
+    try {
+        jwt.verify(socket.handshake.auth.token, config.JwtSecret);
+        if(interval) {
+            clearInterval(interval);
+        }
+        interval = setInterval(()=>getApiAndEmit(socket),1000);
 
-   interval = setInterval(() => getApiAndEmit(socket), 1000);
+        socket.on("disconnect", () => {
+            console.log("Client disconnected");
+            clearInterval(interval[socket.id]);
+        });
+        console.log("New client connected");
 
-   socket.on("disconnect", () => {
-       console.log("Client disconnected");
-       clearInterval(interval);
-   });
+    } catch (error) {
+        console.log(error);
+    }
+   
 });
 
 server.listen(config.port, () => console.log(`Listening on port ${config.port}`));

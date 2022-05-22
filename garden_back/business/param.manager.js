@@ -23,8 +23,8 @@ function create() {
         }
     }
 
-    async function getLast() {
-        let result = await paramDAO.getLast();
+    async function getLast(id) {
+        let result = await paramDAO.getLast(id);
         if (result) {
             return result;
         }
