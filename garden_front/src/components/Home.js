@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import jwt from 'jwt-decode';
+import io from "socket.io-client";
 
 import Navbar from './Navbar';
 import FieldCard from "./FieldCard";
+import FieldCardAdd from "./FieldCardAdd";
 
 const styles = {
     con: {
@@ -15,8 +18,10 @@ const styles = {
         alignItems: "center"
     },
     title: {
-        fontSize:"24px",
-        padding: "15px"
+        fontSize:"28px",
+        padding: "15px",
+        fontWeight: "bold",
+        color:"#023026"
     },
     addBtn: {
         fontSize:"18px",
@@ -39,9 +44,25 @@ const styles = {
 
 const Home = (props) => {
 
-    const addSec = () => {
-        alert("section added");
-    }
+    const [sections, setSections] = useState([]);
+
+    useEffect(() => {
+        const getSections = async () => {
+            try {
+                const res = await fetch("http://localhost:3001/api/sections/data", {
+                    method: "GET",
+                    headers: {"authorization": props.token}
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        const socket = io("http://localhost:3001", {auth: {token:props.token}});
+        socket.on("sectionsUpdate", data => {
+            setSections(data.data);
+        });
+        getSections();
+    }, []);
 
     return(
         <div style={styles.con}>
@@ -49,13 +70,12 @@ const Home = (props) => {
 
             <div className="container" >
                 <div style={styles.upSection}>
-                    <div style={styles.title}>Hi username! See your plants:</div>
-                    <Link to="/add-section"> <button style={styles.addBtn} >Add new section</button></Link>
+                    <div style={styles.title}>Hi {jwt(props.token).name}! See your plants:</div>
                 </div>
                 
                 <div style={styles.cardBox}>
-                    <FieldCard />
-                    <FieldCard />
+                    {sections.map((data) => <FieldCard key={data.id} data={data} token={props.token}/>)}
+                    <FieldCardAdd token={props.token}/>
                 </div>
             </div>
             

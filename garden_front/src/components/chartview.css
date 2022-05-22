@@ -1,0 +1,19 @@
+.chartsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .chartsContainer >*{
+    display: flex;
+    width: 100%;
+    height: 100%;
+  }
+  .chartsContainer h3{
+    margin-top: 30vh;
+    text-align: center;
+    width:40%;
+    display: block;
+  }
+  

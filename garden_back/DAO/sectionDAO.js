@@ -7,7 +7,7 @@ const sectionSchema = new mongoose.Schema({
     name: {type: String},
     type: {type: String}
 }, {
-    collation: 'Section'
+    collection: 'Section'
 });
 sectionSchema.plugin(uniqueValidator);
 

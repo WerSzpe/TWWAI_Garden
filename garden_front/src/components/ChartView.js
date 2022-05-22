@@ -1,103 +1,74 @@
 import React, {useState, useEffect} from 'react';
 import io from "socket.io-client";
+import { useParams } from 'react-router-dom';
 
 import Navbar from './Navbar';
 import Linechart from './Linechart';
+import "./chartview.css";
 
 const ENDPOINT = "http://localhost:3001";
 
 const ChartView = (props) => {
 
-    const [response, setResponse] = useState({});
-    const [sampleDate, setSampleDate] = useState(null);
-    const [tempData, setTempData] = useState(null);
-    const [pressData, setPressData] = useState(null);
-    const [humData, setHumData] = useState(null);
-    const [secID, setSecID] = useState(null);
-    
-    const getDataFromSection = async (sec_id) => {
-        const res = await fetch("http://localhost:3001/api/params/");
-        const dataRes = await res.json();
-
-    }
+    const routeparams = useParams();
+    const [data, setData] = useState(null);
 
     const setDatasets = (dataRes) => {
-        let temp = {
+        let dataset = {
             labels: [],
             datasets: [
                 {
                     label: 'Temperature',
                     data: [],
                     borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                }
-            ]
-        };
-        let press = {
-            labels: [],
-            datasets: [
-                {
-                    label: 'Pressure',
-                    data: [],
-                    borderColor: 'rgb(95,220,61)',
-                    backgroundColor: 'rgba(95,220,61, 0.5)',
-                }
-            ]
-        };
-        let hum = {
-            labels: [],
-            datasets: [
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                },
                 {
                     label: 'Humidity',
                     data: [],
                     borderColor: 'rgb(54, 43, 207)',
-                    backgroundColor: 'rgba(54, 43, 207, 0.5)',
+                    backgroundColor: 'rgba(54, 43, 207, 0.5)'
+                },
+                {
+                    label: 'Pressure',
+                    data: [],
+                    borderColor: 'rgb(95,220,61)',
+                    backgroundColor: 'rgba(95,220,61, 0.5)'
                 }
             ]
         };
 
-        temp.labels = dataRes.map(item => {
+        dataset.labels = dataRes.map(item => {
             return item.date;
         });
 
-        press.labels = dataRes.map(item => {
-            return item.date;
-        });
-
-        hum.labels = dataRes.map(item => {
-            return item.date;
-        });
-
-        temp.datasets[0].data = dataRes.map(item => {
+        dataset.datasets[0].data = dataRes.map(item => {
             return item.temp;
         });
-
-        press.datasets[0].data = dataRes.map(item => {
+        dataset.datasets[1].data = dataRes.map(item => {
+            return item.humidity;
+        });
+        dataset.datasets[2].data = dataRes.map(item => {
             return item.pressure;
         });
 
-        hum.datasets[0].data = dataRes.map(item => {
-            return item.humidity;
-        });
+        setData(dataset);
 
-        setTempData(temp);
-        setHumData(hum);
-        setPressData(press);
-    }
+    };
 
     useEffect(() => {
         
-
         const fetchAir = async () => {
-            const res = await fetch("http://localhost:3001/api/params");
-            const dataRes = await res.json();
-            const currentSection = await fetch("http://localhost:3001/api/params/");
+            const currentSection = await fetch("http://localhost:3001/api/params/"+routeparams.id, {
+                method:"GET",
+                headers:{"authorization":props.token}
+            });
             const currentSectionData = await currentSection.json();
-            setSampleDate(dataRes);
+            setDatasets(currentSectionData);
         };
 
-        const socket = io(ENDPOINT);
-        socket.on("currentState", data => {
+        const socket = io(ENDPOINT, {auth: {token: props.token}});
+        socket.on(routeparams.id, data => {
             setDatasets(data.data);
         });
 
@@ -108,10 +79,10 @@ const ChartView = (props) => {
         <div>
             <Navbar />
             
-            <div>
-                <Linechart title="Temperature" data={tempData}/>
-                <Linechart title="Humidity" data={humData} />
-                <Linechart title="Pressure" data={pressData} />
+            <div className="chartsContainer">
+            {
+                data!=null && data.labels.length==0 ? <h3>No data yet...</h3> : <Linechart title="Temperature" data={data}/>
+            }
             </div>
 
         </div>

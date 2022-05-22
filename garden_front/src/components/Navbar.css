@@ -30,7 +30,9 @@
     margin: 5px;
     text-decoration: none;
     color: #faf0e6;
-    
+}
+.list-el:hover{
+    color:green;
 }
 .clear-float{
     clear: both;

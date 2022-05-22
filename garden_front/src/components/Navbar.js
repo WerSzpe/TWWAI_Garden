@@ -3,23 +3,28 @@ import { Link } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = (props) => {
+
+  const logout = async() => {
+    localStorage.removeItem("token");
+    window.location.replace("/");
+  };
+
   return (
     <div className='navback'>
         <div className='title'>
-          <Link to="/" style={{textDecoration:"none", color: "#faf0e6"}}>GardenGarden</Link>
+          <h3 style={{textDecoration:"none", color: "#faf0e6"}}>GardenGarden</h3>
         </div>
-        <ul className='nav-list'>
-          <li>
-            <Link to="/" className='list-el'>Home</Link>
-          </li>
-          <li>
-            <Link to="/calendar" className='list-el'>Calendar</Link>
-          </li>
-          <li>
-            <Link to="/ll" className='list-el'>Log out</Link>
-          </li>
-          <div className='clear-float'></div>
-        </ul>
+        {props.hideLinks?<></>:(
+          <ul className='nav-list'>
+            <li>
+              <Link to="/" className='list-el'>Home</Link>
+            </li>
+            <li>
+              <Link to="/" className='list-el' onClick={() => logout()}>Log out</Link>
+            </li>
+            <div className='clear-float'></div>
+          </ul>
+        )}
         
     </div>
   )

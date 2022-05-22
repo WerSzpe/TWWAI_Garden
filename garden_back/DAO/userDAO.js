@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     name: {type: String},
     password: {type: String}
 }, {
-    collation: 'User'
+    collection: 'User'
 });
 userSchema.plugin(uniqueValidator);
 
